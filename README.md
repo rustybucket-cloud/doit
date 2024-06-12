@@ -23,8 +23,10 @@ Each todo is made up of an id and text.
 `doit -e <todo id>`
 
 ### Search for Todo
+
 `doit -s "<search query>"`
 
 ### Delete Todo
+
 `doit -d <todo id>`
 
