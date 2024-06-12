@@ -1,15 +1,83 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-void display_todos(char todos[][100], int todo_count) {
-	int i;
-	for (i = 0; i < todo_count; i++) {
-		printf("%d: %s\n", i + 1, todos[i]);
+enum ACTIONS {
+	CREATE,
+	LIST,
+	INVALID // this shouldn't happen if argument_guard and get_action are working
+};
+
+void argument_guard(int argc, char *argv[]);
+void add_todo(char* input);
+void list_todos();
+enum ACTIONS get_action(char *argv[]);
+
+int main(int argc, char *argv[]) {
+	argument_guard(argc, argv);
+
+	enum ACTIONS action = get_action(argv);
+
+	switch(action) {
+		case CREATE:
+			add_todo(argv[2]);
+			break;
+		case LIST:
+			list_todos();
+			break;
+		default:
+			printf("Invalid action.\n");
+			exit(1);
+	}
+	
+	return 0;
+}
+
+enum ACTIONS get_action(char *argv[]) {
+	if (strcmp(argv[1], "-c") == 0) {
+		return CREATE;
+	}
+	if (strcmp(argv[1], "-l") == 0) {
+		return LIST;
+	}
+	return INVALID;
+}
+
+void argument_guard(int argc, char *argv[]) {
+	if (argc == 1) {
+		printf("One argument is required.\n");
+		exit(1);
+	}
+	
+	int FLAG_COUNTS = 2;
+	char* valid_flags[] = {"-c", "-l"};
+	bool is_valid_flag = false;
+	for (int i = 0; i < FLAG_COUNTS; i++) {
+		if (strcmp(argv[1], valid_flags[i]) == 0) {
+			is_valid_flag = true;
+		}
+	}
+	if (is_valid_flag == false) {
+		printf("Flag argument is not valid.\nThe following flags are valid: ");
+		for (int i = 0; i < FLAG_COUNTS; i++) {
+			printf("%s", valid_flags[i]);
+			if (i != FLAG_COUNTS - 1) {
+				printf(", ");
+			} else {
+				printf(".\n");
+			}
+		}
+		exit(1);
 	}
 }
 
 void add_todo(char* input) {
+	if (input == NULL) {
+		printf("Todo to create not provided.\n");
+		exit(1);
+	}
+
 	FILE *fptr;
 	fptr = fopen("./todos.txt", "a");
 	if (fptr == NULL) {
@@ -22,29 +90,12 @@ void add_todo(char* input) {
 	fclose(fptr);
 }
 
-int main(int argc, char *argv[]) {
-	int todo_count = 0;
-	size_t todo_size = 5;
-	char todos[todo_size][100];
-
-	if (argc == 1) {
-		printf("One argument is required\n");
-		exit(1);
+void list_todos() {
+	FILE *fptr;
+	char todo[100];
+	fptr = fopen("./todos.txt", "r");
+	while(fgets(todo, 100, fptr)) {
+		printf("%s", todo);
 	}
-	
-	if (strcmp(argv[1], "-c") == 0) {
-		if (argc > 2) {
-			add_todo(argv[2]);
-		} else {
-			printf("A todo is required\n");
-			exit(1);
-		}
-	} else if (strcmp(argv[1], "-l") == 0) {
-		
-	}
-
-	display_todos(todos, todo_count);
-
-	return 0;
+	fclose(fptr);
 }
-
