@@ -98,14 +98,16 @@ void edit_todo(char* id, char* new_text) {
 				should_continue = false;
 				continue;
 			}
-			printf("size: %zu\n", strlen(id_str));
 			id_str[strlen(id_str)] = buffer[i];
 			i++;
 		}
 		if (strcmp(id_str, id) != 0) {
 			strcat(content, buffer);
 		} else {
+			strcat(content, id);
+			strcat(content, ": ");
 			strcat(content, new_text);
+			strcat(content, "\n");
 		}
 		memset(id_str, 0, sizeof(id_str));
 	}

@@ -31,8 +31,8 @@ int main(int argc, char *argv[]) {
 			delete_todo(argv[2]);
 			break;
 		case EDIT:
-			printf("argv[3]: %s\n", argv[3]);
 			edit_todo(argv[2], argv[3]);
+			break;
 		default:
 			printf("Invalid action.\n");
 			exit(EXIT_FAILURE);
