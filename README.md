@@ -20,7 +20,7 @@ Each todo is made up of an id and text.
 
 ### Edit a todo
 
-`doit -e <todo id>`
+`doit -e <todo id> "<new todo text>"`
 
 ### Search for Todo
 
