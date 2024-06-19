@@ -100,4 +100,5 @@ void list_help_options(void) {
 	puts("List\t\t\"-l\" or \"--list\"\tList all created todos\tdoit -l");
 	puts("Delete\t\t\"-d\" or \"--delete\"\tDelete a todo by id\tdoit -d 1");
 	puts("Edit\t\t\"-e\" or \"--edit\"\tEdit a todo\t\tdoit -e 1 \"Walk the cat\"");
+	puts("Search\t\t\"-s\" or \"--search\"\tSearch for todos\tdoit -s \"cat\"");
 }
