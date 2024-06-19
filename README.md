@@ -6,6 +6,10 @@ DoIt is a cli tool for managing your todos.
 
 Each todo is made up of an id and text.
 
+### Active Mode
+
+`doit` will start active mode.
+
 ### Create a Todo
 
 `doit -c "<todo text>"`
