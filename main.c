@@ -12,6 +12,7 @@ typedef enum ACTIONS {
 	EDIT,
 	HELP,
 	ACTIVE,
+	SEARCH,
 	INVALID // this shouldn't happen if get_action is working
 } ACTIONS;
 
@@ -49,8 +50,10 @@ int main(int argc, char *argv[]) {
 		case ACTIVE:
 			start_active_mode();
 			break;
+		case SEARCH:
+			search_todos(argv[2]);
+			break;
 		default:
-			printf("Invalid action.\n");
 			exit(EXIT_FAILURE);
 	}
 	
@@ -77,8 +80,11 @@ ACTIONS get_action(char *argv[], int argc) {
 		if (is_selected(argv[1], "-h", "--help")) {
 			return HELP;
 		}
+		if (is_selected(argv[1], "-s", "--search")) {
+			return SEARCH;
+		}
 	}
-	puts("Invalid action. Enter \"help\" for available actions.");
+	puts("Invalid action. Enter \"--help\" for available actions.");
 	exit(1);
 }
 

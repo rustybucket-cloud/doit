@@ -18,7 +18,7 @@ void add_todo(char* input) {
 	FILE *fptr = get_appendable_file();
 	
 	int todo_id = create_todo_id();
-	fprintf(fptr, "%d: %s", todo_id, input);
+	fprintf(fptr, "%d: %s\n", todo_id, input);
 	printf("Todo created: %s\n", input);
 	fclose(fptr);
 }
@@ -108,6 +108,7 @@ void edit_todo(char* id, char* new_text) {
 			strcat(content, id);
 			strcat(content, ": ");
 			strcat(content, new_text);
+			strcat(content, "\n");
 			printf("%s", content);
 			fputs(content, tmp);
 		}
@@ -118,4 +119,18 @@ void edit_todo(char* id, char* new_text) {
 	remove("todos.txt");
 	rename("todos.tmp", "todos.txt");
 } 
+
+void search_todos(char* search) {
+	if (search == NULL) {
+		puts("Search query is required.");
+		return;
+	}
+	FILE* fptr = get_readable_file();
+	char buffer[100];
+	while(fgets(buffer, 100, fptr)) {
+		if (strstr(buffer, search) != NULL) {
+			printf("%s", buffer);
+		}
+	}
+}
 #endif
