@@ -1,3 +1,6 @@
+#ifndef TODOS_H
+#define TODOS_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -15,7 +18,7 @@ void add_todo(char* input) {
 	FILE *fptr = get_appendable_file();
 	
 	int todo_id = create_todo_id();
-	fprintf(fptr, "%d: %s\n", todo_id, input);
+	fprintf(fptr, "%d: %s", todo_id, input);
 	printf("Todo created: %s\n", input);
 	fclose(fptr);
 }
@@ -43,11 +46,13 @@ void list_todos(void) {
 }
 
 void delete_todo(char* id) {
+	if (id == NULL) {
+		puts("Edit requires an id and updated text");
+		exit(EXIT_FAILURE);
+	}
 	// get all todos except the todo with the matching id
 	FILE *fptr = get_readable_file();
-	char* content;
-	size_t content_size = 500;
-	content = (char*)calloc(content_size, sizeof(char));
+	FILE *tmp = get_temp_file();
 	char buffer[100];
 	while(fgets(buffer, 100, fptr)) {
 		char id_str[100];
@@ -63,18 +68,14 @@ void delete_todo(char* id) {
 			i++;
 		}
 		if (strcmp(id_str, id) != 0) {
-			strcat(content, buffer);
+			fputs(buffer, tmp);
 		}
-		memset(id_str, 0, sizeof(id_str));
 	}
 	fclose(fptr);
+	fclose(tmp);
 
-	// overwrite the file
-	FILE* writable_file = get_writable_file();
-	fprintf(writable_file, content);
-
-	free(content);
-	fclose(writable_file);
+	remove("todos.txt");
+	rename("todos.tmp", "todos.txt");
 }
 
 void edit_todo(char* id, char* new_text) {
@@ -84,9 +85,7 @@ void edit_todo(char* id, char* new_text) {
 	}
 	// get all todos except the todo with the matching id
 	FILE *fptr = get_readable_file();
-	char* content;
-	size_t content_size = 500;
-	content = (char*)calloc(content_size, sizeof(char));
+	FILE *tmp = get_temp_file();
 	char buffer[100];
 	while(fgets(buffer, 100, fptr)) {
 		char id_str[100];
@@ -102,21 +101,21 @@ void edit_todo(char* id, char* new_text) {
 			i++;
 		}
 		if (strcmp(id_str, id) != 0) {
-			strcat(content, buffer);
+			fputs(buffer, tmp);
 		} else {
+			char content[500];
+			memset(content, 0, 500);
 			strcat(content, id);
 			strcat(content, ": ");
 			strcat(content, new_text);
-			strcat(content, "\n");
+			printf("%s", content);
+			fputs(content, tmp);
 		}
-		memset(id_str, 0, sizeof(id_str));
 	}
 	fclose(fptr);
+	fclose(tmp);
 
-	// overwrite the file
-	FILE* writable_file = get_writable_file();
-	fprintf(writable_file, content);
-
-	free(content);
-	fclose(writable_file);
+	remove("todos.txt");
+	rename("todos.tmp", "todos.txt");
 } 
+#endif

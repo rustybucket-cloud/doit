@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "./todos.h"
+#include "./active.h"
 
 typedef enum ACTIONS {
 	CREATE,
@@ -10,6 +11,7 @@ typedef enum ACTIONS {
 	DELETE,
 	EDIT,
 	HELP,
+	ACTIVE,
 	INVALID // this shouldn't happen if get_action is working
 } ACTIONS;
 
@@ -19,10 +21,14 @@ void list_help_options(void);
 
 int main(int argc, char *argv[]) {
 	ACTIONS action = get_action(argv, argc);
-
+	char input[100];
 	switch(action) {
 		case CREATE:
-			add_todo(argv[2]);
+			if (argc >= 3) {
+				strcpy(input, argv[2]);
+				strncat(input, "\n", 2);
+			}
+			add_todo(input);
 			break;
 		case LIST:
 			list_todos();
@@ -31,10 +37,17 @@ int main(int argc, char *argv[]) {
 			delete_todo(argv[2]);
 			break;
 		case EDIT:
-			edit_todo(argv[2], argv[3]);
+			if (argc >= 3) {
+				strcpy(input, argv[3]);
+				strncat(input, "\n", 2);
+			}
+			edit_todo(argv[2], input);
 			break;
 		case HELP:
 			list_help_options();
+			break;
+		case ACTIVE:
+			start_active_mode();
 			break;
 		default:
 			printf("Invalid action.\n");
@@ -45,6 +58,9 @@ int main(int argc, char *argv[]) {
 }
 
 ACTIONS get_action(char *argv[], int argc) {
+	if (argc == 1) {
+		return ACTIVE;
+	}
 	if (argc >= 2) {
 		if (is_selected(argv[1], "-c", "--create")) {
 			return CREATE;
